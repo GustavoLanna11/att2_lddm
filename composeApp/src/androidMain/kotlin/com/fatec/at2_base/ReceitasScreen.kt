@@ -4,8 +4,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -142,7 +140,8 @@ fun ReceitasScreen() {
                             Text("Preparo: ${receita.modoPreparo}", style = MaterialTheme.typography.bodySmall)
                         }
 
-                        IconButton(
+                        // Trocado o IconButton com erro por um botão de texto vermelho "Excluir"
+                        TextButton(
                             onClick = {
                                 scope.launch {
                                     runCatching { ApiService.deletarReceita(receita.id) }
@@ -158,11 +157,7 @@ fun ReceitasScreen() {
                                 }
                             }
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.Delete,
-                                contentDescription = "Deletar",
-                                tint = MaterialTheme.colorScheme.error
-                            )
+                            Text("Excluir", color = MaterialTheme.colorScheme.error)
                         }
                     }
                 }
