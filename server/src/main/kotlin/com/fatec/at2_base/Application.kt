@@ -1,5 +1,6 @@
 package com.fatec.at2_base
 
+import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
@@ -15,12 +16,12 @@ fun main() {
 }
 
 fun Application.module() {
-    // Configura o Ktor para trabalhar com conversão automática de objetos para JSON
+    // Conversor automático: Objeto Kotlin <-> Texto JSON
     install(ContentNegotiation) {
         json()
     }
 
-    // Nossa MutableList em memória para simular o banco de dados das receitas
+    // MutableList em memória simulando o Banco de Dados
     val listaReceitas = mutableListOf(
         Receita(
             id = 1,
@@ -37,23 +38,56 @@ fun Application.module() {
     )
 
     routing {
-        // Requisito: Endpoint GET retornando a lista de dados em JSON
+
+        // 1. READ (Listar todas as receitas) - GET
         get("/receitas") {
             call.respond(listaReceitas)
         }
 
-        // Requisito: Endpoint POST para cadastro de novos itens
+        // 2. CREATE (Cadastrar nova receita) - POST
         post("/receitas") {
             try {
                 val novaReceita = call.receive<Receita>()
-                // Cria uma cópia da receita recebida inserindo o ID correto
-                val receitaComId = novaReceita.copy(id = listaReceitas.size + 1)
-                listaReceitas.add(receitaComId)
+                // Calcula o próximo ID de forma dinâmica e segura
+                val proximoId = if (listaReceitas.isEmpty()) 1 else listaReceitas.maxOf { it.id } + 1
+                val receitaComId = novaReceita.copy(id = proximoId)
 
-                // Retorna sucesso
-                call.respond(io.ktor.http.HttpStatusCode.Created, mapOf("mensagem" to "Receita salva!"))
+                listaReceitas.add(receitaComId)
+                call.respond(HttpStatusCode.Created, mapOf("mensagem" to "Receita salva com sucesso!"))
             } catch (e: Exception) {
-                call.respond(io.ktor.http.HttpStatusCode.BadRequest, "Formato de dados inválido")
+                call.respond(HttpStatusCode.BadRequest, "Formato de dados inválido")
+            }
+        }
+
+        // 3. UPDATE (Editar receita existente) - PUT
+        put("/receitas") {
+            try {
+                val receitaEditada = call.receive<Receita>()
+                val index = listaReceitas.indexOfFirst { it.id == receitaEditada.id }
+
+                if (index != -1) {
+                    listaReceitas[index] = receitaEditada
+                    call.respond(HttpStatusCode.OK, mapOf("mensagem" to "Receita atualizada com sucesso!"))
+                } else {
+                    call.respond(HttpStatusCode.NotFound, "Receita não encontrada para edição")
+                }
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.BadRequest, "Dados inválidos para atualização")
+            }
+        }
+
+        // 4. DELETE (Remover receita por ID) - DELETE
+        delete("/receitas/{id}") {
+            val idParam = call.parameters["id"]?.toIntOrNull()
+            if (idParam != null) {
+                val foiRemovido = listaReceitas.removeIf { it.id == idParam }
+                if (foiRemovido) {
+                    call.respond(HttpStatusCode.OK, mapOf("mensagem" to "Receita removida com sucesso!"))
+                } else {
+                    call.respond(HttpStatusCode.NotFound, "Receita não encontrada")
+                }
+            } else {
+                call.respond(HttpStatusCode.BadRequest, "ID da receita inválido")
             }
         }
     }
