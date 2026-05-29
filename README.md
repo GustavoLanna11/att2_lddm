@@ -12,15 +12,15 @@ O ecossistema foi projetado para resolver o problema de armazenamento e gerencia
 Para o correto funcionamento do ecossistema, o backend deve ser iniciado antes do aplicativo móvel, garantindo que os endpoints estejam prontos para receber as conexões.
 
 Passo 1: Iniciar o Servidor (Backend Ktor)
-- No IntelliJ IDEA, abra a árvore de arquivos e navegue até a pasta: server/src/main/kotlin/com/fatec/at2_base/.
+- No IntelliJ IDEA, abra a árvore de arquivos e navegue até a pasta: ```server/src/main/kotlin/com/fatec/at2_base/```.
 - Abra o arquivo ```Application.kt```.
-- Localize a função fun main() { (linha 11) e clique no triângulo verde (Play) ao lado esquerdo dela.
-- Escolha a opção Run 'ApplicationKt'.
-- Confirme no terminal inferior do IntelliJ se a linha Responding at http://127.0.0.1:8080 apareceu. Deixe essa execução ativa.
+- Localize a função ```fun main()``` (linha 11) e clique no triângulo verde (Play) ao lado esquerdo dela.
+- Escolha a opção Run ```ApplicationKt```.
+- Confirme no terminal inferior do IntelliJ se a linha Responding at ```http://127.0.0.1:8080``` apareceu. Deixe essa execução ativa.
 
 Passo 2: Iniciar o Aplicativo (Módulo Android)
 - Na barra de ferramentas superior do IntelliJ (ao centro/direita), localize o menu de configurações de execução.
-- Altere a seleção de ApplicationKt para composeApp.
+- Altere a seleção de ```ApplicationKt``` para ```composeApp```.
 - Certifique-se de que o emulador (ex: Pixel 6) está selecionado na caixa ao lado.
 - Clique no botão de Play Verde da barra superior.
 - O IntelliJ compilará o módulo Android, abrirá o emulador e instalará o aplicativo automaticamente.
